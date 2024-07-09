@@ -6,6 +6,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Game } from 'src/types/Game';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../constants/Colors';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
+import { addFavourite, removeFavourite } from '../store/slices/gameSlice';
 
 export interface GameCardComponentProps {
     item: Game
@@ -13,6 +16,21 @@ export interface GameCardComponentProps {
 
 const GameCardComponent: React.FC<GameCardComponentProps> = ({ item }) => {
     const navigation = useNavigation<StackNavigation>();
+    const dispatch = useDispatch<AppDispatch>();
+
+    const favourites = useSelector((state: RootState) => state.games.favourites)
+    const isFavorited = favourites.some(fav => fav.id === item.id);
+
+    const handleFavourite = () => {
+        if (!item) {
+            return;
+        }
+        if (favourites.some(fav => fav.id === item.id)) {
+            dispatch(removeFavourite(item.id));
+        } else {
+            dispatch(addFavourite(item));
+        }
+    };
 
     return (
         <View style={styles.container}>
@@ -23,11 +41,11 @@ const GameCardComponent: React.FC<GameCardComponentProps> = ({ item }) => {
                     <Text>Rating: {item.rating}/5</Text>
                 </View>
             </View>
-            <TouchableOpacity style={styles.detailsCta} onPress={() => navigation.navigate('DetailsScreen')}>
+            <TouchableOpacity style={styles.detailsCta} onPress={() => navigation.navigate('DetailsScreen', { id: item.id })}>
                 <Text style={styles.detailsCtaText}>Details</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.favouriteCta}>
-                <MaterialCommunityIcons name={item.isFavourite ? 'heart' : 'heart-outline'} size={22} color={Colors.primary} />
+            <TouchableOpacity style={styles.favouriteCta} onPress={handleFavourite}>
+                <MaterialCommunityIcons name={isFavorited ? 'heart' : 'heart-outline'} size={22} color={Colors.primary} />
             </TouchableOpacity>
         </View>
     );

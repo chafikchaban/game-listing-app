@@ -14,7 +14,7 @@ export type ScreenNames = ["MainTabNavigator", "DetailsScreen"]
 
 export type RootStackParamList = {
     MainTabNavigator: undefined;
-    DetailsScreen: undefined;
+    DetailsScreen: { id: number };
 };
 
 export type MainTabParamList = {
@@ -29,7 +29,6 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainTabNavigator = () => (
     <Tab.Navigator
-
         screenOptions={({ route }) => ({
             tabBarInactiveTintColor: Colors.gray,
             tabBarActiveTintColor: Colors.secondary,
@@ -52,8 +51,6 @@ const MainTabNavigator = () => (
 );
 
 const AppNavigator = () => {
-
-
     return (
         <NavigationContainer>
             <Stack.Navigator initialRouteName="MainTabNavigator">
